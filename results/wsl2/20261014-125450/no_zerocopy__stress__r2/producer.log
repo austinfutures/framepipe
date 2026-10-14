@@ -1,0 +1,4 @@
+[producer] shm /framepipe: 14.1 MiB, 2 stream(s) x 8 slots x 925696 B
+[producer] running 30.0 s at 60.00 Hz, transport=copy fifo=80 mlock=1
+[producer] stream 0: ok=1800 ring_full=0 missed_deadline=0
+[producer] stream 1: ok=1800 ring_full=0 missed_deadline=0

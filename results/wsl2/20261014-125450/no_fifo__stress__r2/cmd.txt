@@ -1,0 +1,2 @@
+/home/austin/framepipe/build/fp_producer --transport zerocopy --duration 30 --fps 60 --streams 2 --shm /framepipe --out /home/austin/framepipe/results/wsl2/20261014-125450/no_fifo__stress__r2 --cpus 10,9 --mlock
+/home/austin/framepipe/build/fp_consumer --transport zerocopy --model /home/austin/framepipe/models/tiny_policy.onnx --shm /framepipe --out /home/austin/framepipe/results/wsl2/20261014-125450/no_fifo__stress__r2 --max-frames 5800 --cpu 11 --mlock

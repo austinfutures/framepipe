@@ -1,0 +1,2 @@
+/home/austin/framepipe/build/fp_producer --transport copy --duration 30 --fps 60 --streams 2 --shm /framepipe --out /home/austin/framepipe/results/wsl2/20261014-125450/baseline__idle__r3
+/home/austin/framepipe/build/fp_consumer --transport copy --model /home/austin/framepipe/models/tiny_policy.onnx --shm /framepipe --out /home/austin/framepipe/results/wsl2/20261014-125450/baseline__idle__r3 --max-frames 5800

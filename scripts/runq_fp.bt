@@ -1,0 +1,46 @@
+#!/usr/bin/env bpftrace
+// runq_fp.bt — run-queue delay and preemptions for framepipe threads (comm "fp_*").
+//
+// Run-queue delay = time from "task became runnable" (woken up, or preempted while
+// still runnable) to "task actually got the CPU". That is exactly the scheduler's
+// contribution to jitter: the work was ready, the CPU was busy with something else.
+//
+// Uses only stable scheduler tracepoints (no kprobes, no BTF required).
+// No BEGIN/END blocks: Ubuntu 22.04's bpftrace 0.14 package can't resolve them
+// ("Could not resolve symbol: /proc/self/exe:BEGIN_trigger") and refuses to attach.
+// The tracer's own userspace process is pinned to housekeeping CPUs by profile.sh;
+// its preemptions of our threads still show up in the report (observer effect).
+// Output: one CSV line per event (no header), plus summary histograms at exit:
+//   ts_ns,event,comm,tid,cpu,delay_us,other
+//     event=runq     delay_us = run-queue delay; other = task that was running before us
+//     event=preempt  we were switched out while still runnable; other = who took the CPU
+// ts_ns is bpftrace's nsecs = CLOCK_MONOTONIC, the same clock as our frame timestamps,
+// so events can be lined up with individual frames (scripts/profile_report.py does).
+
+
+tracepoint:sched:sched_wakeup,
+tracepoint:sched:sched_wakeup_new
+/ strncmp(args->comm, "fp_", 3) == 0 /
+{
+  @enq[args->pid] = nsecs;
+}
+
+tracepoint:sched:sched_switch
+{
+  // prev_state & 0xff == 0  ->  the outgoing task is still runnable (TASK_RUNNING,
+  // possibly with the TASK_REPORT_MAX "preempted" bit 0x100 that newer kernels set).
+  if ((args->prev_state & 0xff) == 0 && strncmp(args->prev_comm, "fp_", 3) == 0) {
+    @enq[args->prev_pid] = nsecs;
+    @preempted_by[args->prev_comm, args->next_comm] = count();
+    printf("%llu,preempt,%s,%d,%d,0,%s\n", nsecs, args->prev_comm, args->prev_pid, cpu, args->next_comm);
+  }
+
+  $t = @enq[args->next_pid];
+  if ($t != 0) {
+    $us = (nsecs - $t) / 1000;
+    @runq_us[args->next_comm] = hist($us);
+    printf("%llu,runq,%s,%d,%d,%llu,%s\n", nsecs, args->next_comm, args->next_pid, cpu, $us, args->prev_comm);
+    delete(@enq[args->next_pid]);
+  }
+}
+

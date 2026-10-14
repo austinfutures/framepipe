@@ -1,0 +1,11 @@
+build/
+third_party/
+.venv/
+__pycache__/
+*.pyc
+# perf recordings are large and machine-specific; the extracted text is kept
+*.sched.data
+*.sched.data.old
+perf.data*
+models/*.onnx
+!models/.gitkeep

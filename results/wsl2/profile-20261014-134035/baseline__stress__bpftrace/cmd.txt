@@ -1,0 +1,2 @@
+/home/austin/framepipe/build/fp_producer --transport copy --duration 15 --fps 60 --streams 2 --shm /framepipe --out /home/austin/framepipe/results/wsl2/profile-20261014-134035/baseline__stress__bpftrace
+/home/austin/framepipe/build/fp_consumer --transport copy --model /home/austin/framepipe/models/tiny_policy.onnx --shm /framepipe --out /home/austin/framepipe/results/wsl2/profile-20261014-134035/baseline__stress__bpftrace --max-frames 4000

@@ -1,0 +1,4 @@
+[consumer] model /home/austin/framepipe/models/tiny_policy.onnx: input image [1,3,120,160]; outputs action [1,7]
+[consumer] warm-up 50 runs, slowest 4.470 ms
+[consumer] ready: transport=zerocopy fifo=70 cpu=-1 mlock=1 latest_only=0 streams=2
+[consumer] processed=3599 skipped_stale=0 log_overflow=0 (sink 1.355, 25412)
