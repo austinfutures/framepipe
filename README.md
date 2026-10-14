@@ -48,7 +48,6 @@ build/fp_ring_test                         # ring correctness check
 sudo scripts/profile.sh --configs baseline,mlock --tool bpftrace    # scheduler traces
 ```
 
-`docs/MILESTONES.md` walks through the build one milestone at a time.
 
 ## Experiments
 
